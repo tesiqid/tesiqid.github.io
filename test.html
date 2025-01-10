@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQ Test</title>
+    <style>
+        /* Reset dasar */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #6a11cb, #2575fc);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            color: #333;
+            position: relative;
+        }
+        .content {
+            flex: 3;
+            max-width: 75%;
+        }
+        .navigation {
+            flex: 1;
+            max-width: 25%;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        .navigation h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #2575fc;
+        }
+        .navigation .nav-item {
+            margin: 10px 0;
+        }
+        .navigation .nav-item a {
+            display: block;
+            text-decoration: none;
+            background: #2575fc;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .navigation .nav-item a:hover {
+            background: #6a11cb;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #2575fc;
+        }
+        .timer {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #34c759;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background: #f0f0f0;
+            height: 10px;
+            border-radius: 50px;
+            margin-bottom: 30px;
+        }
+        .progress-bar {
+            width: 0;
+            height: 100%;
+            background: green;
+            border-radius: 50px;
+            transition: width 0.4s ease, background-color 0.4s ease;
+        }
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .options {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: 1fr 1fr;
+            margin-bottom: 30px;
+        }
+        .options button {
+            background: #2575fc;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .options button:hover {
+            background: #6a11cb;
+            transform: scale(1.05);
+        }
+        .options button:active {
+            background: #4c88d6;
+            transform: scale(1);
+        }
+        .email-container {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .email-container label {
+            font-size: 1rem;
+            color: #333;
+        }
+        .email-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+        .email-container .checkbox {
+            display: flex;
+            align-items: center;
+        }
+        .email-container .checkbox input {
+            margin-right: 10px;
+        }
+        .email-container button {
+            background: #34c759;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .email-container button:hover {
+            background: #2bb54a;
+        }
+        @media screen and (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .content {
+                max-width: 100%;
+            }
+            .navigation {
+                position: static;
+                max-width: 100%;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
+            <h1>Question <span id="question-number">1</span>/45</h1>
+            <div class="question" id="question-text">Loading question...</div>
+            <div class="options" id="options-container"></div>
+            <div class="iq-result-container">
+                <p>Skor IQ Kamu Adalah: <span id="iq-score" class="iq-score">0</span></p>
+            </div>
+            <!-- Timer Display -->
+            <div class="timer" id="timer">25:00</div>
+            <div class="email-container">
+                <button id="start-timer-btn">Mulai Timer</button>
+            </div>
+        </div>
+        <div class="navigation">
+            <h2>Navigasi</h2>
+            <div class="nav-item"><a href="/index.html" align="center">Beranda</a></div>
+            <div class="nav-item"><a href="/test/test2.html"align="center">EQ</a></div>
+            <div class="nav-item"><a href="/test/test3.html" align="center">SQ</a></div>
+        </div>
+    </div>
+
+    <script>
+const allQuestions = [
+    { question: "4, 7, 10, 30, 50, 80, ..., 140, 180", options: ["110", "120", "115", "125"], correct: 0 },
+    { question: "Jika dragon = 654312, nogard = ?", options: ["213546", "213456", "231456", "231546"], correct: 1 },
+    { question: "Manakah yang salah untuk menggambarkan tajam?", options: ["durian", "pisau", "rambutan", "sangge-sangge"], correct: 2},
+    { question: "Jika 3x - 7 = 11, X = ?", options: ["3", "5", "6", "7"], correct: 2 },
+    { question : "3 apel seharga 25.000.-, Andi membeli 6, Citra juga sama, namun Reucche belum diketahui. Jika toko hanya memiliki 27 buah tersisa, maka Reucche menghabiskan uang senilai?", options: ["100.000.-", "110.000.-", "125.000.-", "135.000.-"], correct: 2},
+    { question : "Jika Pulpen untuk menulis maka Buku untuk", options: ["mencoret", "menggambar", "mencatat", "menyetak"], correct: 0 },
+    { question : "13 × (3 + 2) : 2", options: ["32", "34", "36", "39"], correct: 3},
+    { question: "Jika 5 = 12, 6 = 18, maka 7 = ...", options: ["20", "21", "24", "25"], correct: 2 },
+    { question: "Berapa jumlah sudut dalam segi delapan?", options: ["720", "1080", "1440", "360"], correct: 1 },
+    { question: "Jika 'Arreuch' adalah kakak dari 'Gottenberg', dan 'Gottenberg' adalah anak dari 'Archuncha', apa hubungan 'Arreuch' dengan 'Archuncha'?", options: ["Ayah", "Anak", "Cucu", "Keponakan"], correct: 1 },
+    { question: "Pilih kata yang tidak memiliki hubungan dengan yang lain.", options: ["Matahari", "Bulan", "Bintang", "Pohon"], correct: 3 },
+    { question: "Apa angka berikutnya dalam deret 2, 6, 12, 20, ...?", options: ["30", "32", "36", "42"], correct: 1 },
+    { question: "Manakah yang bukan termasuk planet?", options: ["Venus", "Mars", "Andromeda", "Saturnus"], correct: 2 },
+    { question: "Jika 12:4 = 3, maka 100:25 = ...", options: ["2", "3", "4", "5"], correct: 2 },
+    { question: "Apa kata yang berlawanan dengan 'ringan'?", options: ["Berat", "Panas", "Besar", "Cepat"], correct: 0 },
+    { question: "Jika B = 2, C = 3, maka G = ...", options: ["5", "7", "8", "9"], correct: 1 },
+    { question: "Pilih pola yang berbeda.", options: ["Segitiga", "Persegi", "Lingkaran", "Sepatu"], correct: 3 },
+    { question: "Tentukan huruf kelima dalam urutan Z, Y, X, W, ...", options: ["V", "U", "T", "S"], correct: 0 },
+    { question: "Apa nilai x jika 2x + 4 = 14?", options: ["4", "5", "6", "7"], correct: 1 },
+    { question: "Jika 2, 3, 5, 8, 12, ..., maka angka selanjutnya adalah?", options: ["15", "17", "20", "22"], correct: 1 },
+    { question: "Jika hari ini adalah Rabu, 45 hari kemudian adalah hari apa?", options: ["Jumat", "Sabtu", "Minggu", "Selasa"], correct: 1 },
+    { question: "Jika A = 1, B = 2, C = 3, maka Z + Y adalah?", options: ["24", "50", "49", "51"], correct: 3 },
+    { question: "Manakah di antara berikut yang berbeda?", options: ["Kayu", "Besi", "Batu", "Bunga"], correct: 3 },
+    { question: "Jika Andi lebih tua dari Budi, Budi lebih tua dari Citra, dan Citra lebih tua dari Dika, siapa yang paling muda?", options: ["Budi", "Dika", "Citra", "Andi"], correct: 1 },
+    { question: "Evaluasi jawaban berikut: Andi memiliki kejeniusan diatas rata-rata tapi sangat sulit berinteraksi, maka andi?", options: ["Bagus, dan sikap mungkin karena sifat", "Buruk, karena Etika & Moral lebih utama."], correct: 1 },
+    { question: "Jika semua burung bisa terbang, dan burung adalah unggas, apakah unggas pasti bisa terbang?", options: ["Ya", "Tidak", "Tergantung", "Tidak ada cukup informasi"], correct: 3 },
+    { question: "Apa kata yang memiliki makna kebalikan dari 'dingin'?", options: ["Hangat", "Dingin", "Panas", "Beku"], correct: 2 },
+    { question: "Berapa jumlah sudut segitiga?", options: ["90°", "180°", "360°", "45°"], correct: 1 },
+    { question: "Manakah yang tidak termasuk kategori buah?", options: ["Apel", "Mangga", "Tomat", "Kaktus"], correct: 3 },
+    { question: "Jika buku ada di rak, rak ada di kamar, maka buku berada di ...", options: ["Kamar", "Meja", "Dapur", "Lemari"], correct: 0 },
+    { question: "Jika 8 = 64, 7 = 49, maka 6 = ...", options: ["36", "30", "24", "28"], correct: 0 },
+    { question: "Jika merah + biru = ungu, biru + kuning = hijau, maka merah + kuning = ...", options: ["Ungu", "Hijau", "Jingga", "Merah"], correct: 1 },
+    { question: "Jika jarum jam menunjuk angka 9, sudut yang terbentuk adalah ...", options: ["45°", "90°", "180°", "270°"], correct: 1 },
+    { question: "Manakah angka yang tidak termasuk dalam deret: 3, 6, 9, 12, 15, 18, 22?", options: ["3", "15", "18", "22"], correct: 3 },
+    { question: "A, A, D, E, G, I, ..., L, N", options: ["I", "H", "J", "K"], correct: 2 },
+    { question: "Jika A = 3, B = 4, maka C = 6, maka D = ?", options: ["4", "5", "6", "7"], correct: 3 },
+    { question: "Berapa hasil dari 12 × 12?", options: ["144", "120", "136", "132"], correct: 0 },
+    { question: "Analisis jawaban berikut: Andi telah sedang membeli kue bolu", options: ["Benar, karena itu adalah kebahasaan", "Salah, karena itu bukan tipe kebahasaan Bahasa Indonesia"], correct: 1 },
+    { question: "Apa kebalikan dari 'besar'?", options: ["Kecil", "Pendek", "Ringan", "Cepat"], correct: 0 },
+    { question: "Manakah huruf yang tidak termasuk dalam kata 'LAMPIRAN'?", options: ["L", "A", "M", "Z"], correct: 3 },
+    { question: "Apa angka berikutnya dalam urutan: 5, 10, 20, 40, ...?", options: ["60", "70", "80", "90"], correct: 2 },
+    { question: "Jika x + y = 10 dan y = 3, maka x = ...", options: ["7", "6", "5", "4"], correct: 0 },
+    { question: "Apa angka berikutnya dalam deret: 1, 4, 9, 16, ...?", options: ["20", "26", "30", "36"], correct: 3 },
+    { question: "Apa nilai logika dari 'Benar AND Salah'?", options: ["Benar", "Salah"], correct: 1 },
+    { question: "Seekor ayam memiliki 2 kaki. Jika ada 5 ayam, berapa jumlah kakinya?", options: ["8", "10", "12", "14"], correct: 1 },
+    { question: "Apa hasil dari 9 - 3 x 2?", options: ["3", "6", "9", "12"], correct: 0 },
+    { question: "Dalam pola bilangan: 2, 4, 6, 8, ..., bilangan berikutnya adalah ...", options: ["9", "10", "11", "12"], correct: 1 },
+    { question: "Jika sebuah kubus memiliki panjang rusuk 3 cm, maka volumenya adalah ...", options: ["9 cm3", "18 cm3", "27 cm3", "36 cm3"], correct: 2 },
+    { question: "Dalam persamaan x + 3 = 7, nilai x adalah ...", options: ["2", "3", "4", "5"], correct: 2 },
+    { question: "Dalam pola: A, B, C, ..., huruf berikutnya adalah ...", options: ["D", "E", "F", "G"], correct: 0 },
+    { question: "Jika seekor siput bergerak 2 cm per menit, berapa jauh ia bergerak dalam 15 menit?", options: ["20 cm", "25 cm", "30 cm", "35 cm"], correct: 2 },
+    { question: "Bilangan apa yang kurang dari 5 dan lebih besar dari 3?", options: ["2", "3", "4", "5"], correct: 2 },
+    { question: "Jika 2^x = 16, maka nilai x adalah ...", options: ["2", "3", "4", "5"], correct: 2 },
+    { question: "Dalam urutan Fibonacci: 1, 1, 2, 3, 5, ..., bilangan berikutnya adalah ...", options: ["5", "8", "13", "21"], correct: 1 },
+    { question: "Sebuah lingkaran memiliki diameter 14 cm. Berapakah kelilingnya (gunakan pi = 22/7)?", options: ["44 cm", "88 cm", "154 cm", "308 cm"], correct: 1 },
+    { question: "Dalam sistem biner, bilangan 1010 sama dengan ... dalam desimal", options: ["8", "10", "12", "14"], correct: 1 },
+    { question: "Bentuk geometri dengan 4 sisi yang sama panjang disebut ...", options: ["Persegi", "Segitiga", "Lingkaran", "Trapesium"], correct: 0 },
+    { question: "Angka apa yang muncul setelah 14 dalam urutan bilangan genap?", options: ["15", "16", "17", "18"], correct: 1 },
+    { question: "Apa nilai logika dari 'Benar AND Salah'?", options: ["Benar", "Salah"], correct: 1 },
+    { question: "Dina memiliki 3 apel dan memberikan 1 kepada Toni. Berapa apel yang tersisa?", options: ["1", "2", "3", "4"], correct: 1 },
+    { question: "Jika A = 2 dan B = 3, maka nilai dari A x B adalah ...", options: ["5", "6", "7", "8"], correct: 1 },
+    { question: "Jika hari ini adalah Jumat, maka 15 hari sebelumnya adalah ...", options: ["Senin", "Selasa", "Rabu", "Kamis"], correct: 3 },
+    { question: "Jika kecepatan cahaya adalah 300.000 km/s, berapa jarak yang ditempuh dalam 5 detik?", options: ["1.500.000 km", "1.200.000 km", "1.800.000 km", "2.000.000 km"], correct: 0 },
+    { question: "Jika sebuah segitiga memiliki sudut 90 derajat, maka disebut ...", options: ["Segitiga siku-siku", "Segitiga sama sisi", "Segitiga lancip", "Segitiga tumpul"], correct: 0 },
+    { question: "Dalam bahasa pemrograman, perintah 'while' digunakan untuk ...", options: ["Percabangan", "Pengulangan", "Deklarasi", "Pemberhentian"], correct: 1 },
+    { question: "Berapa jumlah sisi pada sebuah dodekahedron?", options: ["10", "12", "14", "20"], correct: 1 },
+    { question: "Seorang detektif menemukan sidik jari di tempat kejadian, tetapi tidak ada saksi mata. Apa langkah logis pertama yang harus diambil?", options: ["Menginterogasi tetangga", "Mengambil sampel DNA", "Mencocokkan sidik jari dengan database", "Mencari rekaman CCTV"], correct: 2 },
+    { question: "Sebuah kapal misterius ditemukan di tengah samudra tanpa awak kapal. Apa hipotesis terbaik untuk memulai investigasi?", options: ["Kapal tenggelam sebagian", "Bajak laut menyerang", "Kerusakan mesin", "Fenomena supranatural"], correct: 1 },
+    { question: "Jika seorang penulis menggunakan simbol burung untuk menggambarkan kebebasan, apa yang dapat disimpulkan tentang pendekatan literasinya?", options: ["Simbolisme", "Realisme", "Romantisme", "Naturalisme"], correct: 0 },
+    { question: "Sebuah perusahaan teknologi mendadak kehilangan data pelanggan. Apa langkah terbaik untuk meminimalkan kerugian lebih lanjut?", options: ["Mengumumkan insiden kepada publik", "Melakukan audit sistem keamanan", "Menghubungi pihak berwenang", "Memulihkan data dari cadangan"], correct: 3 },
+    { question: "Dalam sebuah eksperimen, seorang ilmuwan menemukan bahwa hasil pengamatan tidak sesuai hipotesis. Apa langkah berikutnya?", options: ["Mengubah data agar sesuai", "Mengulang eksperimen", "Membatalkan penelitian", "Membuat hipotesis baru"], correct: 1 },
+    { question: "Sebuah komunitas mengalami penurunan populasi mendadak. Apa penyebab yang paling masuk akal untuk diteliti pertama kali?", options: ["Perubahan ekonomi", "Wabah penyakit", "Bencana alam", "Migrasi besar-besaran"], correct: 3 },
+    { question: "Jika seorang seniman menggambar potret dirinya dengan latar belakang yang berubah-ubah, apa pesan yang mungkin ingin disampaikan?", options: ["Identitas yang fleksibel", "Keindahan alam", "Kesepian", "Kehidupan yang stabil"], correct: 0 },
+    { question: "Seorang arkeolog menemukan artefak kuno di sebuah gua. Apa langkah pertama yang harus dilakukan untuk melindungi artefak?", options: ["Membersihkannya", "Mengukur dimensinya", "Mengamankan situs penemuan", "Mengidentifikasi usianya"], correct: 2 },
+    { question: "Jika sebuah cerita menggunakan plot twist di akhir, apa tujuan utamanya?", options: ["Meningkatkan ketegangan", "Mengejutkan pembaca", "Menjelaskan alur", "Menghilangkan konflik"], correct: 1 },
+    { question: "Dalam debat, seorang pembicara menggunakan data yang tidak relevan. Apa strategi terbaik untuk menanggapinya?", options: ["Mengabaikan data tersebut", "Menyerang karakter pembicara", "Menyanggah dengan data relevan", "Mengubah topik debat"], correct: 2 },
+    { question: "Jika seorang filsuf menyatakan bahwa 'keberadaan mendahului esensi', ideologi apa yang dia anut?", options: ["Eksistensialisme", "Positivisme", "Materialisme", "Humanisme"], correct: 0 },
+    { question: "Dalam sebuah lukisan abstrak, warna merah mendominasi. Apa interpretasi yang paling umum?", options: ["Kemarahan", "Cinta", "Kebebasan", "Kematian"], correct: 0 },
+    { question: "Seorang programmer menemukan bug dalam sistem produksi. Apa langkah pertama yang harus dilakukan?", options: ["Menonaktifkan sistem", "Mengidentifikasi penyebab bug", "Membuat solusi sementara", "Melaporkan ke manajemen"], correct: 1 },
+    { question: "Jika seseorang memutuskan untuk mendaki gunung tanpa persiapan, apa risiko terbesar yang akan dihadapi?", options: ["Cedera fisik", "Kehilangan arah", "Kelelahan mental", "Kehilangan persediaan"], correct: 0 },
+    { question: "Seorang pemimpin menggunakan metafora dalam pidatonya. Apa tujuan utamanya?", options: ["Menghibur audiens", "Meningkatkan pemahaman", "Menunjukkan kreativitas", "Menghindari pertanyaan sulit"], correct: 1 },
+    { question: "Jika sebuah novel berfokus pada perjuangan individu melawan sistem, tema apa yang diangkat?", options: ["Kebebasan", "Keadilan", "Alienasi", "Pemberontakan"], correct: 3 },
+    { question: "Seorang ilmuwan menemukan mikroorganisme baru di kedalaman laut. Apa langkah terbaik untuk memulai penelitian?", options: ["Memberi nama organisme", "Menganalisis habitatnya", "Mempelajari DNA-nya", "Mempublikasikan temuan"], correct: 2 },
+    { question: "Dalam drama teater, karakter utama gagal mencapai tujuannya. Apa elemen cerita yang diperkuat?", options: ["Konflik", "Klimaks", "Antagonisme", "Tragedi"], correct: 3 },
+    { question: "Seorang aktivis menggunakan media sosial untuk menyebarkan pesan. Apa keuntungan utama dari pendekatan ini?", options: ["Efisiensi biaya", "Jangkauan luas", "Keamanan informasi", "Anonimitas"], correct: 1 },
+    { question: "Jika sebuah eksperimen menghasilkan hasil yang sama berulang kali, apa yang dapat disimpulkan?", options: ["Kebetulan", "Keandalan", "Kelemahan metode", "Kesalahan alat"], correct: 1 },
+    { question: "Dalam sebuah perdebatan, argumen yang disampaikan menggunakan emosi kuat. Apa jenis logika yang digunakan?", options: ["Logos", "Pathos", "Ethos", "Kairos"], correct: 1 },
+    { question: "Seorang fotografer menggunakan kontras cahaya dalam karyanya. Apa yang ingin ditekankan?", options: ["Keseimbangan", "Tekstur", "Emosi", "Kejelasan"], correct: 2 },
+    { question: "Jika seorang ekonom menyebut 'tangan tak terlihat', siapa yang ia rujuk?", options: ["John Keynes", "Adam Smith", "Karl Marx", "David Ricardo"], correct: 1 },
+    { question: "Dalam ekosistem, jika predator utama punah, apa yang mungkin terjadi?", options: ["Overpopulasi mangsa", "Migrasi besar-besaran", "Keseimbangan stabil", "Penurunan mangsa"], correct: 0 },
+    { question: "Seorang seniman menciptakan karya yang mengkritik norma sosial. Apa istilah yang tepat untuk seni ini?", options: ["Seni rupa murni", "Seni konseptual", "Seni kontemporer", "Seni dekoratif"], correct: 1 },
+    { question: "Jika dalam diskusi, seorang peserta terus mengalihkan topik, apa tujuannya?", options: ["Menghindari kritik", "Menguasai diskusi", "Meningkatkan fokus", "Memancing emosi"], correct: 0 },
+    { question: "Dalam sebuah cerita, narator tidak dapat dipercaya. Apa dampaknya bagi pembaca?", options: ["Kehilangan minat", "Menambah intrik", "Memahami cerita lebih baik", "Menciptakan simpati"], correct: 1 },
+    { question: "Sebuah karya seni menunjukkan kehidupan sehari-hari tanpa modifikasi. Apa pendekatan yang digunakan?", options: ["Realisme", "Impresionisme", "Surealisme", "Ekspresionisme"], correct: 0 },
+    { question: "Jika sebuah planet kehilangan atmosfernya, apa dampak terbesar pada kehidupan?", options: ["Penurunan suhu", "Hilangnya air", "Kematian makhluk hidup", "Penurunan oksigen"], correct: 2 },
+    { question: "Dalam debat, apa strategi terbaik untuk menangani serangan ad hominem?", options: ["Menyerang balik", "Mengabaikan serangan", "Mengembalikan fokus ke topik", "Meminta waktu jeda"], correct: 2 },
+    { question: "Seorang pemimpin tim memutuskan untuk memberikan tanggung jawab kepada anggota yang memiliki pengalaman lebih sedikit. Apa tujuan utama langkah ini?", options: ["Mengurangi beban kerja", "Melatih kemampuan anggota", "Menghindari konflik", "Mempercepat pekerjaan"], correct: 1 },
+    { question: "Jika sebuah proyek mengalami keterlambatan karena sumber daya yang terbatas, apa langkah terbaik yang dapat diambil?", options: ["Mengurangi target", "Menambah sumber daya", "Meningkatkan jam kerja", "Menghentikan proyek"], correct: 1 },
+    { question: "Seorang siswa diberi tugas untuk membuat presentasi tentang perubahan iklim. Apa yang harus dia lakukan terlebih dahulu?", options: ["Mengumpulkan data terpercaya", "Membuat slide presentasi", "Berlatih berbicara", "Mengatur waktu presentasi"], correct: 0 },
+    { question: "Dalam sebuah diskusi kelompok, seorang anggota terus mendominasi pembicaraan. Apa tindakan terbaik dari fasilitator?", options: ["Membiarkannya berbicara", "Mengalihkan pembicaraan", "Memberikan waktu kepada anggota lain", "Mengakhiri diskusi"], correct: 2 },
+    { question: "Jika seorang pelanggan mengeluh tentang produk yang rusak, apa langkah pertama yang harus dilakukan oleh tim layanan pelanggan?", options: ["Mengganti produk", "Meminta maaf dan menginvestigasi", "Menawarkan diskon", "Menyalahkan pelanggan"], correct: 1 },
+    { question: "Sebuah organisasi ingin mengurangi dampak lingkungannya. Apa langkah pertama yang dapat dilakukan?", options: ["Mengurangi penggunaan plastik", "Menanam pohon", "Mengganti energi fosil dengan energi terbarukan", "Meningkatkan kesadaran karyawan"], correct: 0 },
+    { question: "Jika seorang atlet gagal mencapai targetnya, apa evaluasi terbaik yang dapat dilakukan oleh pelatih?", options: ["Menambah sesi latihan", "Mengevaluasi program latihan", "Mengubah target", "Mengkritik atlet"], correct: 1 },
+    { question: "Seorang siswa terus mendapatkan nilai rendah dalam matematika. Apa pendekatan terbaik yang harus diambil guru?", options: ["Memberikan tugas tambahan", "Memahami kesulitan siswa", "Mengurangi materi yang diajarkan", "Memberikan ujian ulang"], correct: 1 },
+    { question: "Dalam sebuah eksperimen, hasil yang diperoleh tidak sesuai dengan hipotesis. Apa yang harus dilakukan?", options: ["Mengulang eksperimen", "Mengubah hasil", "Menyusun laporan baru", "Mengevaluasi metode yang digunakan"], correct: 3 },
+    { question: "Sebuah perusahaan menemukan bahwa produk baru mereka tidak laku di pasaran. Apa langkah evaluasi pertama yang harus dilakukan?", options: ["Menghentikan produksi", "Mencari umpan balik dari pelanggan", "Mengubah desain produk", "Meningkatkan anggaran pemasaran"], correct: 1 },
+    { question: "Seorang siswa diberi tugas kelompok tetapi tidak berkontribusi. Apa yang dapat dilakukan oleh anggota kelompok lainnya?", options: ["Melaporkan kepada guru", "Membiarkan saja", "Membagi ulang tanggung jawab", "Mengeluarkannya dari kelompok"], correct: 2 },
+    { question: "Jika seorang manajer menghadapi konflik antar anggota tim, apa pendekatan terbaik untuk menyelesaikannya?", options: ["Memihak salah satu pihak", "Mengabaikan konflik", "Mengadakan diskusi terbuka", "Menghukum kedua pihak"], correct: 2 },
+    { question: "Dalam proyek kolaborasi, hasil akhir tidak sesuai dengan standar yang diharapkan. Apa langkah terbaik?", options: ["Menyalahkan tim", "Mengevaluasi proses kerja", "Meninggalkan proyek", "Mengurangi standar"], correct: 1 },
+    { question: "Seorang guru menggunakan metode baru dalam pengajaran, tetapi siswa kesulitan memahaminya. Apa yang harus dilakukan guru?", options: ["Menggunakan metode lain", "Menjelaskan metode dengan lebih rinci", "Mengubah seluruh materi", "Mengikuti saran siswa"], correct: 1 },
+    { question: "Sebuah perusahaan melihat peningkatan jumlah keluhan pelanggan. Apa yang harus dilakukan pertama kali?", options: ["Meningkatkan kualitas produk", "Melakukan survei kepuasan pelanggan", "Mengurangi harga produk", "Meningkatkan jumlah staf layanan"], correct: 1 },
+    { question: "Dalam sebuah pelatihan, peserta merasa bosan dan kurang terlibat. Apa langkah terbaik yang dapat dilakukan oleh pelatih?", options: ["Menghentikan pelatihan", "Mengubah metode pelatihan", "Meningkatkan durasi pelatihan", "Memberikan tugas tambahan"], correct: 1 },
+    { question: "Jika seorang ilmuwan ingin mengaplikasikan penemuan baru di dunia industri, apa langkah pertama yang harus dilakukan?", options: ["Mencari investor", "Menguji kelayakan penemuan", "Mempatenkan penemuan", "Mengumumkan kepada publik"], correct: 1 },
+    { question: "Dalam sebuah proyek, salah satu anggota tim terlambat menyelesaikan tugasnya. Apa langkah yang harus diambil oleh pemimpin proyek?", options: ["Memberikan teguran", "Mengevaluasi alasan keterlambatan", "Menggantikan anggota", "Mengabaikan keterlambatan"], correct: 1 },
+    { question: "Seorang karyawan baru membuat kesalahan besar dalam tugasnya. Apa langkah terbaik yang dapat diambil oleh atasannya?", options: ["Mengkritiknya di depan umum", "Memberikan bimbingan", "Mengurangi tanggung jawabnya", "Mengabaikan kesalahan"], correct: 1 },
+    { question: "Jika sebuah sekolah ingin meningkatkan kemampuan literasi siswa, apa langkah awal yang dapat diambil?", options: ["Menyediakan lebih banyak buku", "Meningkatkan jumlah jam pelajaran", "Mengadakan pelatihan untuk guru", "Mengurangi jumlah siswa per kelas"], correct: 0 },
+    { question: "Dalam sebuah organisasi, seorang anggota terus mengajukan ide-ide baru yang tidak realistis. Apa pendekatan terbaik?", options: ["Menolak semua ide", "Membahas kelebihan dan kekurangan ide tersebut", "Mengabaikan anggota tersebut", "Mengubah fokus organisasi"], correct: 1 },
+    { question: "Jika sebuah komunitas ingin meningkatkan kesadaran lingkungan, apa langkah awal yang dapat dilakukan?", options: ["Mengadakan seminar edukasi", "Mengurangi penggunaan listrik", "Menghapus plastik sekali pakai", "Menanam pohon"], correct: 0 },
+    { question: "Seorang siswa menunjukkan peningkatan besar dalam prestasi akademik. Apa yang dapat dilakukan guru untuk mempertahankan motivasinya?", options: ["Memberikan tugas tambahan", "Memberikan penghargaan", "Mengurangi beban tugas", "Mengabaikan peningkatan tersebut"], correct: 1 },
+    { question: "Jika seorang klien tidak puas dengan hasil desain proyek, apa yang harus dilakukan oleh desainer?", options: ["Meninggalkan proyek", "Mendiskusikan ulang kebutuhan klien", "Mengubah desain sepenuhnya", "Mengurangi biaya proyek"], correct: 1 },
+    { question: "Dalam sebuah wawancara kerja, kandidat tidak dapat menjawab pertanyaan teknis dengan baik. Apa langkah terbaik bagi pewawancara?", options: ["Menghentikan wawancara", "Menggali lebih dalam tentang pengalaman kandidat", "Menyarankan pelatihan tambahan", "Menawarkan posisi lain"], correct: 1 },
+    { question: "Dalam sebuah eksperimen ilmiah, data yang dikumpulkan menunjukkan hasil yang tidak konsisten. Apa langkah terbaik?", options: ["Mengulang pengumpulan data", "Mengabaikan data", "Menggunakan data yang paling sesuai", "Mengganti alat pengumpulan data"], correct: 0 },
+    { question: "Seorang atlet merasa kehilangan motivasi setelah kalah dalam kompetisi besar. Apa yang harus dilakukan oleh pelatih?", options: ["Memberikan istirahat", "Meningkatkan intensitas latihan", "Mendiskusikan tujuan masa depan", "Mengubah strategi pelatihan"], correct: 2 },
+    { question: "Dalam sebuah rapat, seorang anggota mengajukan ide yang kontroversial. Apa yang harus dilakukan oleh pemimpin rapat?", options: ["Mengabaikan ide", "Mendiskusikan ide secara terbuka", "Menghentikan rapat", "Meminta anggota untuk menarik ide"], correct: 1 },
+    { question: "Jika sebuah perusahaan ingin memperkenalkan teknologi baru kepada karyawannya, apa langkah pertama yang harus diambil?", options: ["Mengadakan pelatihan", "Membeli peralatan", "Mengurangi teknologi lama", "Mengumumkan rencana perubahan"], correct: 0 },
+    { question: "◁ ▲ ▷, ..., ..., ◁", options:["▼, ▷", "▷, ▼", "▷, ▷", "▼, ▼"], correct: 1 },
+    { question: "1. ✱, ✯, ✪ | 2. □, ■, ▣ | 3. , □, ...", options:["▫", "▪", "□", "■"], correct: 0},
+    { question: "◯ □ ▪, ..., ..., ◯", options: ["■, ▪", "▫, □", "□, ▪", "□, □"], correct: 2 },
+    { question: "✪ ✯, ..., ..., ✱", options: ["✯, ✪", "✪, ✯", "✱, ✯", "✪, ✱"], correct: 0 },
+    { question: "▷ ▷, ..., ..., ▷", options: ["◁, ▷", "◁, ◁", "►, ◁", "▷, ◁"], correct: 1 }   
+    ];
+
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let timerInterval;
+        let timeLeft = 25 * 60; // 25 minutes in seconds
+
+        const progressBar = document.querySelector(".progress-bar");
+        const questionNumber = document.getElementById("question-number");
+        const questionText = document.getElementById("question-text");
+        const optionsContainer = document.getElementById("options-container");
+        const iqScoreDisplay = document.getElementById("iq-score");
+        const timerDisplay = document.getElementById("timer");
+
+        const questions = [];
+
+        function getRandomQuestions(num) {
+            const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, num);
+        }
+
+        function initializeTest() {
+            questions.push(...getRandomQuestions(45));
+            loadQuestion();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                if (seconds < 10) seconds = "0" + seconds;
+                timerDisplay.textContent = `${minutes}:${seconds}`;
+                timeLeft--;
+
+                if (timeLeft < 0 || currentQuestion >= questions.length) {
+                    clearInterval(timerInterval);
+                    showResult();
+                }
+            }, 1000);
+        }
+
+        document.getElementById("start-timer-btn").addEventListener("click", function () {
+            startTimer();
+        });
+
+        function loadQuestion() {
+            if (currentQuestion >= questions.length) {
+                clearInterval(timerInterval);
+                showResult();
+                return;
+            }
+
+            const q = questions[currentQuestion];
+            questionNumber.textContent = currentQuestion + 1;
+            questionText.textContent = q.question;
+            optionsContainer.innerHTML = "";
+
+            q.options.forEach((option, index) => {
+                const button = document.createElement("button");
+                button.textContent = option;
+                button.onclick = () => handleAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function handleAnswer(selectedIndex) {
+            const isCorrect = selectedIndex === questions[currentQuestion].correct;
+            if (isCorrect) {
+                correctAnswers++;
+                progressBar.style.backgroundColor = "green";
+            } else {
+                progressBar.style.backgroundColor = "yellow";
+            }
+
+            const progressPercentage = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+
+            currentQuestion++;
+            loadQuestion();
+        }
+
+        function showResult() {    
+        const mean = 100; 
+        const stdDev = 15; 
+        const meanCorrect = 23; 
+        const stdDevCorrect = 10; 
+        const zScore = (correctAnswers - meanCorrect) / stdDevCorrect;
+        const iq = Math.round(mean + zScore * stdDev);
+        iqScoreDisplay.textContent = iq;
+        }
+
+        initializeTest();
+    </script>
+</body>
+</html>
