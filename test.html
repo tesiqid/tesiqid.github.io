@@ -258,7 +258,7 @@ const allQuestions = [
     { question: "Bilangan apa yang kurang dari 5 dan lebih besar dari 3?", options: ["2", "3", "4", "5"], correct: 2 },
     { question: "Jika 2^x = 16, maka nilai x adalah ...", options: ["2", "3", "4", "5"], correct: 2 },
     { question: "Dalam urutan Fibonacci: 1, 1, 2, 3, 5, ..., bilangan berikutnya adalah ...", options: ["5", "8", "13", "21"], correct: 1 },
-    { question: "Sebuah lingkaran memiliki diameter 14 cm. Berapakah kelilingnya (gunakan pi = 22/7)?", options: ["44 cm", "88 cm", "154 cm", "308 cm"], correct: 1 },
+    { question: "Sebuah lingkaran memiliki diameter 14 cm. Berapakah kelilingnya (gunakan pi = 22/7)?", options: ["44 cm", "88 cm", "154 cm", "308 cm"], correct: 0 },
     { question: "Dalam sistem biner, bilangan 1010 sama dengan ... dalam desimal", options: ["8", "10", "12", "14"], correct: 1 },
     { question: "Bentuk geometri dengan 4 sisi yang sama panjang disebut ...", options: ["Persegi", "Segitiga", "Lingkaran", "Trapesium"], correct: 0 },
     { question: "Angka apa yang muncul setelah 14 dalam urutan bilangan genap?", options: ["15", "16", "17", "18"], correct: 1 },
@@ -329,11 +329,17 @@ const allQuestions = [
     { question: "Seorang atlet merasa kehilangan motivasi setelah kalah dalam kompetisi besar. Apa yang harus dilakukan oleh pelatih?", options: ["Memberikan istirahat", "Meningkatkan intensitas latihan", "Mendiskusikan tujuan masa depan", "Mengubah strategi pelatihan"], correct: 2 },
     { question: "Dalam sebuah rapat, seorang anggota mengajukan ide yang kontroversial. Apa yang harus dilakukan oleh pemimpin rapat?", options: ["Mengabaikan ide", "Mendiskusikan ide secara terbuka", "Menghentikan rapat", "Meminta anggota untuk menarik ide"], correct: 1 },
     { question: "Jika sebuah perusahaan ingin memperkenalkan teknologi baru kepada karyawannya, apa langkah pertama yang harus diambil?", options: ["Mengadakan pelatihan", "Membeli peralatan", "Mengurangi teknologi lama", "Mengumumkan rencana perubahan"], correct: 0 },
-    { question: "◁ ▲ ▷, ..., ..., ◁", options:["▼, ▷", "▷, ▼", "▷, ▷", "▼, ▼"], correct: 1 },
-    { question: "1. ✱, ✯, ✪ | 2. □, ■, ▣ | 3. , □, ...", options:["▫", "▪", "□", "■"], correct: 0},
-    { question: "◯ □ ▪, ..., ..., ◯", options: ["■, ▪", "▫, □", "□, ▪", "□, □"], correct: 2 },
-    { question: "✪ ✯, ..., ..., ✱", options: ["✯, ✪", "✪, ✯", "✱, ✯", "✪, ✱"], correct: 0 },
-    { question: "▷ ▷, ..., ..., ▷", options: ["◁, ▷", "◁, ◁", "►, ◁", "▷, ◁"], correct: 1 }   
+    { question: "★ = ▲▲, ▲ = ▪, ★▲ = ?", "options": ["★★▪", "▪★", "▲▪", "★▪"], "correct": 3 },
+    { question: "★ = ▲▲, ▲ = ▪, ★▲ = ?", options:["★★▪", "▪★", "▲▪", "★▪"], correct: 3 },
+    { question: "■ = ●●, ● = ▲, ▲■ = ?", options:["▲▲■", "■▲▲", "●▲", "▲●"], correct: 0 },
+    { question: "✪ = ▣▣, ▣ = ✴, ✴✪ = ?", options:["✴▣", "▣✪", "✪✴", "▣✴✪"], correct: 2 },
+    { question: "▾ = ◁◁, ◁ = ✦, ✦▾ = ?", options:["▾✦✦", "✦▾", "✦✦▾", "◁✦▾"], correct: 1 },
+    { question: "⬤ = ▪▪, ▪ = ▾, ▾⬤ = ?", options:["⬤▪▪", "▪⬤", "▪▪⬤", "⬤⬤▪"], correct: 2 },
+    { question: "◀ = ✧✧, ✧ = ■, ■◀ = ?", options:["◀✧✧", "✧◀", "✧✧◀", "■✧◀"], correct: 1 },
+    { question: "✴ = ▣▣, ▣ = ⬛, ⬛✴ = ?", options:["▣⬛✴", "⬛▣✴", "✴⬛", "⬛⬛✴"], correct: 3 },
+    { question: "■ = ▴▴, ▴ = ✯, ✯■ = ?", options:["■✯✯", "✯■", "✯✯■", "■■✯"], correct: 1 },
+    { question: "▽ = ▪▪, ▪ = ▸, ▸▽ = ?", options:["▪▽▪", "▽▸", "▪▪▽", "▸▪▽"], correct: 2 },
+    { question: "⬛ = ▣▣, ▣ = ▲, ▲⬛ = ?", options:["▲▲⬛", "⬛▲", "▣▲⬛", "▲⬛▣"], correct: 0 }
     ];
 
         let currentQuestion = 0;
